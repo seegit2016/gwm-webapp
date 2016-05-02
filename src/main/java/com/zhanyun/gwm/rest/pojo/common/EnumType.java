@@ -4,7 +4,7 @@ import java.util.Map;
 
 public class EnumType implements Comparable<EnumType>{
 	/**
-	 * 名称
+	 * 名称(一般与属性名相同)
 	 */
 	private String name;
 	/**
@@ -61,4 +61,9 @@ public class EnumType implements Comparable<EnumType>{
 	public void setEnumValues(Map<String,String> enumValues) {
 		this.enumValues = enumValues;
 	} 
+	
+	@Override
+	public String toString() {
+		return super.toString();
+	}
 }
