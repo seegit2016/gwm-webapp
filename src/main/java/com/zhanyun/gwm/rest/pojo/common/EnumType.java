@@ -61,4 +61,11 @@ public class EnumType implements Comparable<EnumType>{
 	public void setEnumValues(Map<String,String> enumValues) {
 		this.enumValues = enumValues;
 	} 
+	
+	/**
+	 * test
+	 */
+	public String toString() {
+		return super.toString();
+	}
 }
