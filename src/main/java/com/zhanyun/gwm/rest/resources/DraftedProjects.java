@@ -6,11 +6,13 @@ import java.util.List;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
+import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
 import org.codehaus.jackson.JsonGenerationException;
@@ -65,6 +67,28 @@ public class DraftedProjects {
 		return rdata;
 	}
 	
+	/**
+	 * 获取所有立项项目库列表中对象集合(带查询条件)
+	 * @param queryCondition
+	 * @param createByMe
+	 * @return
+	 * @throws JsonGenerationException
+	 * @throws JsonMappingException
+	 * @throws IOException
+	 */
+	@GET
+	@Produces(MediaType.APPLICATION_JSON)
+	@Path("/query")
+	public ResponseData<List<DraftedProject>> query(
+			@QueryParam("condition") @DefaultValue("") String queryCondition/*编号||名称||资助者||预计达成目标*/,
+			@QueryParam("createBySelf") @DefaultValue("") Boolean createByMe)
+			throws JsonGenerationException, JsonMappingException, IOException {
+		this.logger.info("getAllDraftedProjectByQuery()");
+		List<DraftedProject> listItems = new ArrayList<DraftedProject>();
+		listItems = projectService.findAllDraftedProjects(queryCondition,createByMe);
+		ResponseData<List<DraftedProject>> rdata = new ResponseData<List<DraftedProject>>("1", "获取成功！", true, listItems);
+		return rdata;
+	}
 	
 	/**
 	 * 获取单个项目对象

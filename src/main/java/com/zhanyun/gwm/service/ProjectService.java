@@ -66,6 +66,12 @@ public class ProjectService {
 		return rtnOBJs;
 	}
 	
+	public List<DraftedProject> findAllDraftedProjects(String queryCondition,
+			Boolean createByMe) {
+		// TODO 根据查询条件获取
+		return this.findAllDraftedProjects();//临时获取所有
+	}
+	
 	/**
 	 * 获取立项中项目
 	 * @param oid
@@ -187,5 +193,4 @@ public class ProjectService {
 		draftedProject = new DraftedProject(updateEntity);
 		return draftedProject;
 	}
-	
 }
