@@ -16,6 +16,17 @@ public class EnumType implements Comparable<EnumType>{
 	 */
 	private Map<String/*枚举值*/,String/*枚举值描述*/> enumValues; 
 	
+	/**
+	 * 构造函数1
+	 */
+	public EnumType(){}
+	
+	/**
+	 * 构造函数2
+	 * @param name
+	 * @param description
+	 * @param enumValues
+	 */
 	public EnumType(String name,String description,Map<String/*枚举值*/,String/*枚举值描述*/> enumValues){
 		this.name = name;
 		this.description = description;
