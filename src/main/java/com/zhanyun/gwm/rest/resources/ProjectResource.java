@@ -26,8 +26,8 @@ import com.zhanyun.baseweb.exception.BaseWebException;
 import com.zhanyun.baseweb.exception.IOWebException;
 import com.zhanyun.baseweb.exception.OtherWebException;
 import com.zhanyun.baseweb.rest.util.ResponseData;
-import com.zhanyun.gwm.entity.Project;
 import com.zhanyun.gwm.repository.ProjectRepository;
+import com.zhanyun.gwm.rest.pojo.project.DraftedProject;
 import com.zhanyun.gwm.service.ProjectService;
 
 @Component
@@ -55,13 +55,13 @@ public class ProjectResource {
 	 */
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
-	public ResponseData<List<Project>> list()
+	public ResponseData<List<DraftedProject>> list()
 			throws JsonGenerationException, JsonMappingException, IOException {
 		this.logger.info("getAllDraftedProjectObjects()");
-		List<Project> listItems = new ArrayList<Project>();
-		listItems = projectRepository.findAll();
-		
-		ResponseData<List<Project>> rdata = new ResponseData<List<Project>>("1","获取成功！",true,listItems);
+		List<DraftedProject> listItems = new ArrayList<DraftedProject>();
+		//listItems = projectRepository.findAll();
+		listItems = projectService.findAllDraftedProjects();
+		ResponseData<List<DraftedProject>> rdata = new ResponseData<List<DraftedProject>>("1","获取成功！",true,listItems);
 		return rdata;
 	}
 	
@@ -74,18 +74,19 @@ public class ProjectResource {
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("/{oid}")
-	public ResponseData getDraftedProjectObject(@PathParam("oid") String oid) {
+	public ResponseData<DraftedProject> getDraftedProjectObject(@PathParam("oid") String oid) {
 		this.logger.info("getDraftedProjectObject(oid)");
 /*		if (oid == null)
 			return new ResponseData<Object>("-1","获取失败,查询条件为空",false,null);*/
-		Project formOBJ =null;
-		ResponseData<Project> rdata = null;
+		DraftedProject formOBJ =null;
+		ResponseData<DraftedProject> rdata = null;
 		try {
-			formOBJ = projectService.getOne(oid);
+			//formOBJ = projectService.getOne(oid);
+			formOBJ = projectService.getOneDraftedProject(oid);
 			//System.out.println(formOBJ.getName());
 			if (formOBJ==null)
-				rdata = new ResponseData<Project>("-1","获取失败！",false,null);
-			else rdata = new ResponseData<Project>("1","获取成功！",true,formOBJ);
+				rdata = new ResponseData<DraftedProject>("-1","获取失败！",false,null);
+			else rdata = new ResponseData<DraftedProject>("1","获取成功！",true,formOBJ);
 		}catch(Throwable e){
 			this.logger.error(e.getMessage());
 			e.printStackTrace();
@@ -106,14 +107,15 @@ public class ProjectResource {
 	@POST
 	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes(MediaType.APPLICATION_JSON)
-	public ResponseData create(Project newProject) {
+	public ResponseData<DraftedProject> create(DraftedProject newProject) {
 		this.logger.info("createProject(): " + newProject);
-		Project savedProject = null;
+		DraftedProject savedProject = null;
 		try {
 			if (newProject == null) {
 				throw new IOWebException("创建过程产生异常;返回异常码再约定!");
 			}
-			savedProject = projectService.save(newProject);
+			newProject.setOid("");//修正OID
+			savedProject = projectService.saveDraftedProject(newProject);
 		} catch (Throwable e) {
 			this.logger.error(e.getMessage());
 			e.printStackTrace();
@@ -124,7 +126,7 @@ public class ProjectResource {
 			}
 		}
 		
-		return new ResponseData<Project>("1","创建成功！",true,savedProject);
+		return new ResponseData<DraftedProject>("1","创建成功！",true,savedProject);
 	}
 
 	/**
@@ -137,13 +139,14 @@ public class ProjectResource {
 	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Path("{oid}")
-	public ResponseData update(@PathParam("oid") String oid, Project projectOBJ) {
+	public ResponseData<DraftedProject> update(@PathParam("oid") String oid, DraftedProject projectOBJ) {
 		this.logger.info("update(oid): " + projectOBJ);
 		try {
-			if (projectOBJ == null) {
+			if (projectOBJ == null /*|| !projectOBJ.getOid().equals(oid)*/) {
 				throw new IOWebException("更新过程产生异常;返回异常码再约定!");
 			}
-			projectService.save(projectOBJ);
+			projectOBJ.setOid(oid);//修正OID
+			projectOBJ = projectService.updateDraftedProject(projectOBJ);
 		} catch (Throwable e) {
 			this.logger.error(e.getMessage());
 			e.printStackTrace();
@@ -153,7 +156,7 @@ public class ProjectResource {
 				throw new OtherWebException("更新过程产生异常:" + e.getMessage() + ";返回异常码再约定!",500);
 			}
 		}
-		return new ResponseData<Project>("1","更新成功！",true,projectOBJ);
+		return new ResponseData<DraftedProject>("1","更新成功！",true,projectOBJ);
 	}
 
 	/**
@@ -164,10 +167,10 @@ public class ProjectResource {
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("{oid}")
 	@ResponseBody
-	public ResponseData delete(@PathParam("oid") String oid) throws BaseWebException {
+	public ResponseData<Object> delete(@PathParam("oid") String oid) throws BaseWebException {
 		this.logger.info("deleteProject(oid)");
 		try {
-			projectService.delete(oid);
+			projectService.deleteDraftedProject(oid);
 		} catch (Throwable e) {
 			this.logger.error(e.getMessage());
 			e.printStackTrace();
@@ -175,5 +178,4 @@ public class ProjectResource {
 		}
 		return new ResponseData<Object>("1","删除成功！",true,null);
 	}
-	
 }
