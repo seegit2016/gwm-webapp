@@ -55,7 +55,7 @@ public class ProjectResource {
 	 */
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
-	public ResponseData list()
+	public ResponseData<List<Project>> list()
 			throws JsonGenerationException, JsonMappingException, IOException {
 		this.logger.info("getAllDraftedProjectObjects()");
 		List<Project> listItems = new ArrayList<Project>();
