@@ -32,7 +32,7 @@ import com.zhanyun.gwm.service.ProjectService;
 
 @Component
 @Path("/draftedprojects")
-public class ProjectResource {
+public class DraftedProjects {
 
 	private final Logger logger = LoggerFactory.getLogger(this.getClass());
 	
