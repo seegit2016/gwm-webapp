@@ -16,7 +16,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 import com.zhanyun.gwm.entity.GProject;
 import com.zhanyun.gwm.entity.GSchool;
 import com.zhanyun.gwm.entity.GSupervise;
-import com.zhanyun.gwm.entity.Project;
+import com.zhanyun.gwm.entity.ProjectEntity;
 import com.zhanyun.gwm.repository.GProjectRepository;
 import com.zhanyun.gwm.repository.GSchoolRepository;
 import com.zhanyun.gwm.repository.ProjectRepository;
@@ -43,14 +43,14 @@ public class gwmTest {
 	{
 		ctx = new ClassPathXmlApplicationContext("context.xml");
 		gProjectService = ctx.getBean(GProjectService.class);
-		gSuperviseService = ctx.getBean(GSuperviseService.class);
-		
 		gProjectRepository = ctx.getBean(GProjectRepository.class);
+		
+		gSuperviseService = ctx.getBean(GSuperviseService.class);
 		
 		gSchoolRepository = ctx.getBean(GSchoolRepository.class);
 		gSchoolService = ctx.getBean(GSchoolService.class);
-		projectService = ctx.getBean(ProjectService.class);
 		
+		projectService = ctx.getBean(ProjectService.class);
 		projectRepository = ctx.getBean(ProjectRepository.class);
 	}
 	
@@ -186,7 +186,7 @@ public class gwmTest {
 		newProject.setPlanImburseSchoolSum(2);
 		newProject.setPlanGoal("“新一千零一夜睡前故事”项目开展以来，深受学校老师与孩子的好评。青海一所学校的喇叭坏了，孩子们缠着老师要听故事，老师索性自己拿起故事书，为孩子们念了整整一星期！");
 		*/
-		Project savedProject = projectService.getOne("402881e75442a39a015442a3a2760000");
+		ProjectEntity savedProject = projectService.getOne("402881e75442a39a015442a3a2760000");
 		//savedProject.setName("2016创▪可乐");
 		//projectService.save(savedProject);
 		

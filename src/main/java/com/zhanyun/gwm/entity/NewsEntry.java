@@ -22,6 +22,10 @@ import com.zhanyun.gwm.JsonViews;
 @javax.persistence.Entity
 public class NewsEntry implements Serializable
 {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 
 	@Id
 	@GeneratedValue
