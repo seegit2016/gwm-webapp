@@ -32,6 +32,11 @@ public class UserObject {
 	 */
 	private String roleName;
 	
+	/**
+	 * 构造函数
+	 */
+	public UserObject(){}
+	
 	public String getOid() {
 		return oid;
 	}
