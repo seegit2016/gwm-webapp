@@ -32,6 +32,10 @@ public class UserObject {
 	 */
 	private String roleName;
 	
+	public UserObject(){
+		
+	}
+	
 	public String getOid() {
 		return oid;
 	}
