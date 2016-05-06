@@ -21,6 +21,9 @@ import org.codehaus.jackson.map.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.ResponseBody;
 
@@ -79,14 +82,25 @@ public class DraftedProjects {
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("/query")
-	public ResponseData<List<DraftedProject>> query(
+	public ResponseData<Object> query(
 			@QueryParam("condition") @DefaultValue("") String queryCondition/*编号||名称||资助者||预计达成目标*/,
-			@QueryParam("createBySelf") @DefaultValue("") Boolean createByMe)
+			@QueryParam("createBySelf") @DefaultValue("") Boolean createByMe,
+			@QueryParam("pageindex") @DefaultValue("0") Integer pageindex,
+			@QueryParam("pagesize") @DefaultValue("0") Integer pagesize)
 			throws JsonGenerationException, JsonMappingException, IOException {
 		this.logger.info("getAllDraftedProjectByQuery()");
 		List<DraftedProject> listItems = new ArrayList<DraftedProject>();
-		listItems = projectService.findAllDraftedProjects(queryCondition,createByMe);
-		ResponseData<List<DraftedProject>> rdata = new ResponseData<List<DraftedProject>>("1", "获取成功！", true, listItems);
+		ResponseData<Object> rdata = null;
+		if ( pagesize==null || pagesize<1) pagesize = 0;
+		if ( pageindex==null || pageindex<0) pageindex =0;
+		if (pagesize==0){
+			listItems = projectService.findAllDraftedProjects(queryCondition,createByMe);
+			rdata = new ResponseData<Object>("1", "获取成功！", true, listItems);
+		}else {
+			Pageable pageable = new PageRequest(pageindex,pagesize);
+			Page<DraftedProject> rtnPage = projectService.findAllDraftedProjects(queryCondition,createByMe,pageable);
+			rdata = new ResponseData<Object>("1", "获取成功！", true, rtnPage);
+		}
 		return rdata;
 	}
 	

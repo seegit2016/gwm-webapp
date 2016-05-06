@@ -5,9 +5,23 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Path;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -66,10 +80,177 @@ public class ProjectService {
 		return rtnOBJs;
 	}
 	
-	public List<DraftedProject> findAllDraftedProjects(String queryCondition,
+	/**
+	 * 获取所有立项中的项目-支持分页
+	 * @return
+	 */
+	public Page<DraftedProject> findAllDraftedProjects(Pageable pageable) {
+		Page<ProjectEntity> pageEntity = null;
+		List<DraftedProject> rtnOBJs = new ArrayList<DraftedProject>();
+		
+		
+		Specification<ProjectEntity>   specification =  new Specification<ProjectEntity>(){
+			@Override
+			public Predicate toPredicate(Root<ProjectEntity> root,
+					CriteriaQuery<?> criteriaQuery, CriteriaBuilder cb) {
+				
+				return cb.equal(root.get("projectPhase"), "立项");
+			};
+		};
+			
+		try {
+			pageEntity = projectRepository.findAll(specification,pageable);
+		} catch (Exception e) {
+		}
+		
+
+		for (ProjectEntity item : pageEntity.getContent()) {
+			DraftedProject dProject = new DraftedProject(item);
+			rtnOBJs.add(dProject);
+		}
+		 Collections.sort(rtnOBJs);
+		 
+		Page<DraftedProject> page = new PageImpl<DraftedProject>(rtnOBJs,pageable,pageEntity.getTotalElements());
+		return page;
+	}
+	/**
+	 * 获取符合条件的立项中的项目
+	 * @return
+	 */
+	public List<DraftedProject> findDraftedProjectsByCond(String queryCondition,
 			Boolean createByMe) {
-		// TODO 根据查询条件获取
-		return this.findAllDraftedProjects();//临时获取所有
+		List<ProjectEntity> draftedProjectEntity = new ArrayList<ProjectEntity>();
+		List<DraftedProject> rtnOBJs = new ArrayList<DraftedProject>();
+		final Map<String,String> conditionMap = new HashMap<String,String>();
+		
+		if (queryCondition!=null){
+			String [] conditionArray =   queryCondition.split("\\|\\|");
+			for (String condition : conditionArray) {
+				String [] nameAndValue =condition.split("=");
+				if (nameAndValue.length==2){
+					conditionMap.put(nameAndValue[0], nameAndValue[1]);
+				}
+			}
+		}
+		
+		final Boolean _createByMe =createByMe;
+		
+		Specification<ProjectEntity>   specification =  new Specification<ProjectEntity>(){
+			@Override
+			public Predicate toPredicate(Root<ProjectEntity> root,
+					CriteriaQuery<?> criteriaQuery, CriteriaBuilder cb) {
+				// TODO Auto-generated method stub
+				Predicate predicate =null;
+				Set<String> set = conditionMap.keySet();
+				ArrayList<Predicate> predicateArray =  new ArrayList<Predicate>();
+				 
+				for (String s:set) {
+					Path path = root.get(s);
+					predicateArray.add(cb.like(path, conditionMap.get(s)));
+				}
+				Predicate[] arr = new Predicate[predicateArray.size()];
+				predicate = cb.and(new Predicate[]{cb.or(predicateArray.toArray(arr)),cb.equal(root.get("projectPhase"), "立项")});
+				
+				if (_createByMe!=null && _createByMe == true){
+					predicate = cb.and(predicate,cb.equal(root.get("creator"), "梅D")) ;
+				}
+				return predicate;
+			}; 
+		};
+		
+		try {
+				draftedProjectEntity = projectRepository.findAll(specification);
+		} catch (Exception e) {
+		}
+		
+		if (draftedProjectEntity == null || draftedProjectEntity.size() == 0) {
+			return rtnOBJs;
+		}
+		for (ProjectEntity item : draftedProjectEntity) {
+			DraftedProject dProject = new DraftedProject(item);
+			rtnOBJs.add(dProject);
+		}
+		 Collections.sort(rtnOBJs);
+		return rtnOBJs;
+	}
+	
+	
+	
+	public Page<DraftedProject> findDraftedProjectsByCond(String queryCondition,
+			Boolean createByMe,Pageable pageable) {
+		Page<ProjectEntity> pageEntity = null;
+		List<DraftedProject> rtnOBJs = new ArrayList<DraftedProject>();
+		
+		
+		
+		final Map<String,String> conditionMap = new HashMap<String,String>();
+		
+		if (queryCondition!=null){
+			String [] conditionArray =   queryCondition.split("\\|\\|");
+			for (String condition : conditionArray) {
+				String [] nameAndValue =condition.split("=");
+				if (nameAndValue.length==2){
+					conditionMap.put(nameAndValue[0], nameAndValue[1]);
+				}
+			}
+		}
+		
+		final Boolean _createByMe =createByMe;
+		
+		Specification<ProjectEntity>   specification =  new Specification<ProjectEntity>(){
+			@Override
+			public Predicate toPredicate(Root<ProjectEntity> root,
+					CriteriaQuery<?> criteriaQuery, CriteriaBuilder cb) {
+				// TODO Auto-generated method stub
+				Predicate predicate =null;
+				Set<String> set = conditionMap.keySet();
+				ArrayList<Predicate> predicateArray =  new ArrayList<Predicate>();
+				 
+				for (String s:set) {
+					Path path = root.get(s);
+					predicateArray.add(cb.like(path, conditionMap.get(s)));
+				}
+				Predicate[] arr = new Predicate[predicateArray.size()];
+				predicate = cb.and(new Predicate[]{cb.or(predicateArray.toArray(arr)),cb.equal(root.get("projectPhase"), "立项")});
+				
+				if (_createByMe!=null && _createByMe == true){
+					predicate = cb.and(predicate,cb.equal(root.get("creator"), "梅D")) ;
+				}
+				return predicate;
+			}; 
+		};
+		
+		try {
+			pageEntity = projectRepository.findAll(specification,pageable);
+		} catch (Exception e) {
+		}
+		
+		for (ProjectEntity item : pageEntity.getContent()) {
+			DraftedProject dProject = new DraftedProject(item);
+			rtnOBJs.add(dProject);
+		}
+		 Collections.sort(rtnOBJs);
+		 
+		Page<DraftedProject> page = new PageImpl<DraftedProject>(rtnOBJs,pageable,pageEntity.getTotalElements());
+		return page;
+	}
+	
+	
+	public List<DraftedProject> findAllDraftedProjects(String queryCondition,Boolean createByMe) {
+		if ((queryCondition == null || queryCondition.length() == 0) && (createByMe == null || createByMe == false) ){
+				return this.findAllDraftedProjects();
+		} else {
+			return this.findDraftedProjectsByCond(queryCondition,createByMe);
+		}
+	}
+	
+	public Page<DraftedProject> findAllDraftedProjects(String queryCondition,
+			Boolean createByMe,Pageable pageable) {
+		if ((queryCondition == null || queryCondition.length() == 0) && (createByMe == null || createByMe == false) ){
+			return this.findAllDraftedProjects(pageable);
+		} else {
+			return this.findDraftedProjectsByCond(queryCondition,createByMe,pageable);
+		}
 	}
 	
 	/**
@@ -115,7 +296,7 @@ public class ProjectService {
 		//new日期对象
 		Date date = new Date(l);
 		//转换提日期输出格式
-		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMddHH");//暂默认规则
+		SimpleDateFormat dateFormat = new SimpleDateFormat("yyMMddHHmmssFFF");//暂默认规则
 		pcode = dateFormat.format(date);
 		if (pDirection.equals("新1001夜")) {
 			pcode = "1-" + pcode;
@@ -131,7 +312,7 @@ public class ProjectService {
 		if (newProject.getPromoter() == null || newProject.getPromoter().trim().equals("")) {
 			newProject.setPromoter("梅冬");		//需解决Rest API访问时User信息传递
 		}
-		ProjectEntity newEntity = draftedProject.getRawEntity();
+		ProjectEntity newEntity = newProject.retriveRawEntity();
 		newEntity = this.save(newEntity);
 		draftedProject = new DraftedProject(newEntity);
 		return draftedProject;
@@ -188,7 +369,7 @@ public class ProjectService {
 			pcode = "2-" + pcode.substring(2);	//暂默认规则
 		}
 		projectOBJ.setCode(pcode);
-		ProjectEntity updateEntity = draftedProject.getRawEntity();
+		ProjectEntity updateEntity = projectOBJ.retriveRawEntity();
 		updateEntity = this.save(updateEntity);
 		draftedProject = new DraftedProject(updateEntity);
 		return draftedProject;

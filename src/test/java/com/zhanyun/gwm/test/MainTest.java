@@ -10,12 +10,15 @@ public class MainTest {
 		// new日期对象
 		Date date = new Date(l);
 		// 转换提日期输出格式
-		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd-HH");
+		SimpleDateFormat dateFormat = new SimpleDateFormat("yyMMddHHmmssFFF");
 		String pcode = dateFormat.format(date);
 		
-		@SuppressWarnings("unused")
+/*		@SuppressWarnings("unused")
 		String str = pcode.substring(0);
-		str = pcode.substring(1);
+		str = pcode.substring(1);*/
+		
+		System.out.println(pcode);
+		
 	}
 
 }

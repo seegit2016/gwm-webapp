@@ -193,7 +193,7 @@ public class DraftedProject implements Comparable<DraftedProject>{
 		return this.getCode().compareTo(arg0.getCode());
 	}
 
-	public ProjectEntity getRawEntity() {
+	public ProjectEntity retriveRawEntity() {
 		ProjectEntity entity = new ProjectEntity();
 		entity.setOid(this.oid) ;
 		entity.setCode(this.code) ;

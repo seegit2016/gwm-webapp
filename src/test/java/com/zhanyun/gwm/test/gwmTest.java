@@ -20,6 +20,7 @@ import com.zhanyun.gwm.entity.ProjectEntity;
 import com.zhanyun.gwm.repository.GProjectRepository;
 import com.zhanyun.gwm.repository.GSchoolRepository;
 import com.zhanyun.gwm.repository.ProjectRepository;
+import com.zhanyun.gwm.rest.pojo.project.DraftedProject;
 import com.zhanyun.gwm.service.GProjectService;
 import com.zhanyun.gwm.service.GSchoolService;
 import com.zhanyun.gwm.service.GSuperviseService;
@@ -200,5 +201,18 @@ public class gwmTest {
 	public void deleteNewProj() {
 		//projectService.delete("402881e75442c80b015442c812cb0000");
 	}
+	
+	@Test
+	public void testFindAllDraftedProjects(){
+		String condition = "code=2016001||name=2016创▪可乐";
+		Boolean createByMe = true;
+		
+	   List<DraftedProject> aa = projectService.findAllDraftedProjects(condition, createByMe);
+	  System.out.println(aa.size());
+		
+	}
+	
+	
+	
 	
 }
