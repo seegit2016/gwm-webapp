@@ -13,6 +13,8 @@ import org.junit.Test;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
+import com.zhanyun.baseweb.rest.pojo.area.County;
+import com.zhanyun.baseweb.service.AreaService;
 import com.zhanyun.gwm.entity.GProject;
 import com.zhanyun.gwm.entity.GSchool;
 import com.zhanyun.gwm.entity.GSupervise;
@@ -39,6 +41,7 @@ public class gwmTest {
 	private GProjectRepository gProjectRepository;
 	private GSchoolRepository gSchoolRepository;
 	private ProjectRepository projectRepository;
+	private AreaService areaService;
 	
 	
 	{
@@ -53,6 +56,9 @@ public class gwmTest {
 		
 		projectService = ctx.getBean(ProjectService.class);
 		projectRepository = ctx.getBean(ProjectRepository.class);
+		areaService = ctx.getBean(AreaService.class);
+		
+		
 	}
 	
 	/*
@@ -187,11 +193,11 @@ public class gwmTest {
 		newProject.setPlanImburseSchoolSum(2);
 		newProject.setPlanGoal("“新一千零一夜睡前故事”项目开展以来，深受学校老师与孩子的好评。青海一所学校的喇叭坏了，孩子们缠着老师要听故事，老师索性自己拿起故事书，为孩子们念了整整一星期！");
 		*/
-		ProjectEntity savedProject = projectService.getOne("402881e75442a39a015442a3a2760000");
+		//ProjectEntity savedProject = projectService.getOne("402881e75442a39a015442a3a2760000");
 		//savedProject.setName("2016创▪可乐");
 		//projectService.save(savedProject);
 		
-		System.out.println(savedProject.getName());
+		//System.out.println(savedProject.getName());
 		
 /*		projectService.save(newProject);
 		System.out.println(newProject.getName());*/
@@ -203,12 +209,15 @@ public class gwmTest {
 	}
 	
 	@Test
-	public void testFindAllDraftedProjects(){
-		String condition = "code=2016001||name=2016创▪可乐";
+	public void testFindAllDraftedProjects() throws Throwable{
+/*		String condition = "code=2016001||name=2016创▪可乐";
 		Boolean createByMe = true;
 		
 	   List<DraftedProject> aa = projectService.findAllDraftedProjects(condition, createByMe);
 	  System.out.println(aa.size());
+	  */
+/*	  List<County> aa = areaService.findAreaByCity("110100");
+	  System.out.println(aa.size());*/
 		
 	}
 	

@@ -19,7 +19,6 @@ import javax.persistence.criteria.Root;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
@@ -58,7 +57,7 @@ public class ProjectService {
 	 * 获取所有立项中的项目
 	 * @return
 	 */
-	public List<DraftedProject> findAllDraftedProjects() {
+	public List<DraftedProject> findAllDraftedProjects() throws Throwable {
 		List<ProjectEntity> allDraftedProjectEntity = new ArrayList<ProjectEntity>();
 		List<DraftedProject> rtnOBJs = new ArrayList<DraftedProject>();
 		try {
@@ -68,6 +67,8 @@ public class ProjectService {
 				allDraftedProjectEntity = projectRepository.findAll();
 			}
 		} catch (Exception e) {
+			e.printStackTrace();
+			throw new Throwable(e.getMessage());
 		}
 		if (allDraftedProjectEntity == null || allDraftedProjectEntity.size() == 0) {
 			return rtnOBJs;
@@ -83,8 +84,9 @@ public class ProjectService {
 	/**
 	 * 获取所有立项中的项目-支持分页
 	 * @return
+	 * @throws Throwable 
 	 */
-	public Page<DraftedProject> findAllDraftedProjects(Pageable pageable) {
+	public Page<DraftedProject> findAllDraftedProjects(Pageable pageable) throws Throwable {
 		Page<ProjectEntity> pageEntity = null;
 		List<DraftedProject> rtnOBJs = new ArrayList<DraftedProject>();
 		
@@ -101,6 +103,8 @@ public class ProjectService {
 		try {
 			pageEntity = projectRepository.findAll(specification,pageable);
 		} catch (Exception e) {
+			e.printStackTrace();
+			throw new Throwable(e.getMessage());
 		}
 		
 
@@ -116,9 +120,10 @@ public class ProjectService {
 	/**
 	 * 获取符合条件的立项中的项目
 	 * @return
+	 * @throws Throwable 
 	 */
 	public List<DraftedProject> findDraftedProjectsByCond(String queryCondition,
-			Boolean createByMe) {
+			Boolean createByMe) throws Throwable {
 		List<ProjectEntity> draftedProjectEntity = new ArrayList<ProjectEntity>();
 		List<DraftedProject> rtnOBJs = new ArrayList<DraftedProject>();
 		final Map<String,String> conditionMap = new HashMap<String,String>();
@@ -161,6 +166,8 @@ public class ProjectService {
 		try {
 				draftedProjectEntity = projectRepository.findAll(specification);
 		} catch (Exception e) {
+			e.printStackTrace();
+			throw new Throwable(e.getMessage());
 		}
 		
 		if (draftedProjectEntity == null || draftedProjectEntity.size() == 0) {
@@ -177,7 +184,7 @@ public class ProjectService {
 	
 	
 	public Page<DraftedProject> findDraftedProjectsByCond(String queryCondition,
-			Boolean createByMe,Pageable pageable) {
+			Boolean createByMe,Pageable pageable) throws Throwable {
 		Page<ProjectEntity> pageEntity = null;
 		List<DraftedProject> rtnOBJs = new ArrayList<DraftedProject>();
 		
@@ -223,6 +230,8 @@ public class ProjectService {
 		try {
 			pageEntity = projectRepository.findAll(specification,pageable);
 		} catch (Exception e) {
+			e.printStackTrace();
+			throw new Throwable(e.getMessage());
 		}
 		
 		for (ProjectEntity item : pageEntity.getContent()) {
@@ -236,7 +245,7 @@ public class ProjectService {
 	}
 	
 	
-	public List<DraftedProject> findAllDraftedProjects(String queryCondition,Boolean createByMe) {
+	public List<DraftedProject> findAllDraftedProjects(String queryCondition,Boolean createByMe) throws Throwable {
 		if ((queryCondition == null || queryCondition.length() == 0) && (createByMe == null || createByMe == false) ){
 				return this.findAllDraftedProjects();
 		} else {
@@ -245,7 +254,7 @@ public class ProjectService {
 	}
 	
 	public Page<DraftedProject> findAllDraftedProjects(String queryCondition,
-			Boolean createByMe,Pageable pageable) {
+			Boolean createByMe,Pageable pageable) throws Throwable {
 		if ((queryCondition == null || queryCondition.length() == 0) && (createByMe == null || createByMe == false) ){
 			return this.findAllDraftedProjects(pageable);
 		} else {

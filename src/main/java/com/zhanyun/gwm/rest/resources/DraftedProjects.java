@@ -54,19 +54,18 @@ public class DraftedProjects {
 	/**
 	 * 获取所有立项项目库列表中对象集合
 	 * @return
-	 * @throws JsonGenerationException
-	 * @throws JsonMappingException
-	 * @throws IOException
+	 * @throws Throwable 
 	 */
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	public ResponseData<List<DraftedProject>> list()
-			throws JsonGenerationException, JsonMappingException, IOException {
+			throws Throwable {
 		this.logger.info("getAllDraftedProjectObjects()");
 		List<DraftedProject> listItems = new ArrayList<DraftedProject>();
-		//listItems = projectRepository.findAll();
 		listItems = projectService.findAllDraftedProjects();
 		ResponseData<List<DraftedProject>> rdata = new ResponseData<List<DraftedProject>>("1","获取成功！",true,listItems);
+		
+		
 		return rdata;
 	}
 	
@@ -75,9 +74,7 @@ public class DraftedProjects {
 	 * @param queryCondition
 	 * @param createByMe
 	 * @return
-	 * @throws JsonGenerationException
-	 * @throws JsonMappingException
-	 * @throws IOException
+	 * @throws Throwable 
 	 */
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
@@ -87,7 +84,7 @@ public class DraftedProjects {
 			@QueryParam("createBySelf") @DefaultValue("") Boolean createByMe,
 			@QueryParam("pageindex") @DefaultValue("0") Integer pageindex,
 			@QueryParam("pagesize") @DefaultValue("0") Integer pagesize)
-			throws JsonGenerationException, JsonMappingException, IOException {
+			throws Throwable {
 		this.logger.info("getAllDraftedProjectByQuery()");
 		List<DraftedProject> listItems = new ArrayList<DraftedProject>();
 		ResponseData<Object> rdata = null;
